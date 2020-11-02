@@ -733,6 +733,8 @@ plt.show()
 ```python
 # Calculate the correlation coefficient and linear regression model 
 # for mouse weight and average tumor volume for the Capomulin regimen
+corr=st.pearsonr(x_axis,y_axis)
+print(f"The correlation between mouse weight and average tumor volume is {corr}")
 (slope, intercept, rvalue, pvalue, stderr) = linregress(x_axis, y_axis)
 print(f"Linear Regression: slope={slope:.2f}, y-intercept={intercept:.2f}, r-value={rvalue:.2f}, p-value={pvalue:.2f}, stderr={stderr:.2f}")
 regress_values = x_axis * slope + intercept
@@ -747,5 +749,6 @@ plt.ylabel("Average Tumor Volume (mm3)")
 plt.savefig("./Images/TumorVolumeScatterRegress_pyplot.png")
 plt.show()
 ```
+The correlation between mouse weight and average tumor volume is (0.8419363424694717, 1.322572243471279e-07)  
 Linear Regression: slope=0.95, y-intercept=21.55, r-value=0.84, p-value=0.00, stderr=0.13  
 ![TumorVolumeScatterRegress_pyplot](Images/TumorVolumeScatterRegress_pyplot.png)
