@@ -208,8 +208,6 @@ duplicate_mice_df.head()
 ```python
 # Create a clean DataFrame by dropping the duplicate mouse by its ID.
 clean_df = combine_data_df.drop_duplicates(subset=["Mouse ID", "Timepoint"])
-html = clean_df.head().to_html()
-print(html)
 clean_df.head()
 ```
 
