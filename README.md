@@ -747,6 +747,6 @@ plt.ylabel("Average Tumor Volume (mm3)")
 plt.savefig("./Images/TumorVolumeScatterRegress_pyplot.png")
 plt.show()
 ```
-The correlation between mouse weight and average tumor volume is 0.84 
+The correlation between mouse weight and average tumor volume is 0.84  
 Linear Regression: slope=0.95, y-intercept=21.55, r-value=0.84, p-value=0.00, stderr=0.13  
 ![TumorVolumeScatterRegress_pyplot](Images/TumorVolumeScatterRegress_pyplot.png)
