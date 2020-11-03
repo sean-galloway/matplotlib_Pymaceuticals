@@ -304,7 +304,6 @@ clean_min_group = clean_min_df.groupby(["Drug Regimen"])
 
 mean_vol = clean_min_group["Tumor Volume (mm3)"].mean().map("{:.2f}".format)
 median_vol = clean_min_group["Tumor Volume (mm3)"].median().map("{:.2f}".format)
-mode_vol = clean_min_group["Tumor Volume (mm3)"].apply(lambda x: x.mode().iloc[0]).map("{:.2f}".format)
 var_vol = clean_min_group["Tumor Volume (mm3)"].var().map("{:.2f}".format)
 std_vol = clean_min_group["Tumor Volume (mm3)"].std().map("{:.2f}".format)
 sem_vol = clean_min_group["Tumor Volume (mm3)"].sem().map("{:.2f}".format)
@@ -313,7 +312,6 @@ sem_vol = clean_min_group["Tumor Volume (mm3)"].sem().map("{:.2f}".format)
 summary_df = pd.DataFrame({
                             "Mean": mean_vol,
                             "Median": median_vol,
-                            "Mode": mode_vol,
                             "Variance": var_vol,
                             "Standard Deviation": std_vol,
                             "SEM": sem_vol
@@ -327,7 +325,6 @@ summary_df
       <th></th>
       <th>Mean</th>
       <th>Median</th>
-      <th>Mode</th>
       <th>Variance</th>
       <th>Standard Deviation</th>
       <th>SEM</th>
@@ -347,7 +344,6 @@ summary_df
       <th>Capomulin</th>
       <td>40.68</td>
       <td>41.56</td>
-      <td>45.00</td>
       <td>24.95</td>
       <td>4.99</td>
       <td>0.33</td>
@@ -356,7 +352,6 @@ summary_df
       <th>Ceftamin</th>
       <td>52.59</td>
       <td>51.78</td>
-      <td>45.00</td>
       <td>39.29</td>
       <td>6.27</td>
       <td>0.47</td>
@@ -365,7 +360,6 @@ summary_df
       <th>Infubinol</th>
       <td>52.88</td>
       <td>51.82</td>
-      <td>45.00</td>
       <td>43.13</td>
       <td>6.57</td>
       <td>0.49</td>
@@ -374,7 +368,6 @@ summary_df
       <th>Ketapril</th>
       <td>55.24</td>
       <td>53.70</td>
-      <td>45.00</td>
       <td>68.55</td>
       <td>8.28</td>
       <td>0.60</td>
@@ -383,7 +376,6 @@ summary_df
       <th>Naftisol</th>
       <td>54.33</td>
       <td>52.51</td>
-      <td>45.00</td>
       <td>66.17</td>
       <td>8.13</td>
       <td>0.60</td>
@@ -396,8 +388,7 @@ summary_df
 # Generate a summary statistics table of mean, median, variance, standard deviation, and SEM of the tumor volume for each regimen
 
 # Using the aggregation method, produce the same summary statistics in a single line
-clean_agg_df = clean_min_df.groupby(["Drug Regimen"]).agg({"Tumor Volume (mm3)": ['mean', 'median', lambda x: x.mode().iloc[0], 'var', 'std', 'sem']})
-clean_agg_df.rename(columns={"<lambda_0>": "mode"}, inplace=True)
+clean_agg_df = clean_min_df.groupby(["Drug Regimen"]).agg({"Tumor Volume (mm3)": ['mean', 'median', 'var', 'std', 'sem']})
 # clean_agg_df[('Tumor Volume (mm3)', 'mean')] = clean_agg_group[('Tumor Volume (mm3)', 'mean')].map("{:.2f}".format)
 clean_agg_df
 ```
@@ -412,7 +403,6 @@ clean_agg_df
       <th></th>
       <th>mean</th>
       <th>median</th>
-      <th>mode</th>
       <th>var</th>
       <th>std</th>
       <th>sem</th>
@@ -432,7 +422,6 @@ clean_agg_df
       <th>Capomulin</th>
       <td>40.675741</td>
       <td>41.557809</td>
-      <td>45.0</td>
       <td>24.947764</td>
       <td>4.994774</td>
       <td>0.329346</td>
@@ -441,7 +430,6 @@ clean_agg_df
       <th>Ceftamin</th>
       <td>52.591172</td>
       <td>51.776157</td>
-      <td>45.0</td>
       <td>39.290177</td>
       <td>6.268188</td>
       <td>0.469821</td>
@@ -450,7 +438,6 @@ clean_agg_df
       <th>Infubinol</th>
       <td>52.884795</td>
       <td>51.820584</td>
-      <td>45.0</td>
       <td>43.128684</td>
       <td>6.567243</td>
       <td>0.492236</td>
@@ -459,7 +446,6 @@ clean_agg_df
       <th>Ketapril</th>
       <td>55.235638</td>
       <td>53.698743</td>
-      <td>45.0</td>
       <td>68.553577</td>
       <td>8.279709</td>
       <td>0.603860</td>
@@ -468,7 +454,6 @@ clean_agg_df
       <th>Naftisol</th>
       <td>54.331565</td>
       <td>52.509285</td>
-      <td>45.0</td>
       <td>66.173479</td>
       <td>8.134708</td>
       <td>0.596466</td>
