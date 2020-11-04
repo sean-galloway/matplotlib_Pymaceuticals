@@ -518,25 +518,21 @@ plt.show()
 ```python
 # Calculate the final tumor volume of each mouse across four of the treatment regimens:  
 # Capomulin, Ramicane, Infubinol, and Ceftamin
-capo_df = clean_df.loc[clean_df["Drug Regimen"] == "Capomulin",:]
-rami_df = clean_df.loc[clean_df["Drug Regimen"] == "Ramicane", :]
-infu_df = clean_df.loc[clean_df["Drug Regimen"] == "Infubinol", :]
-ceft_df = clean_df.loc[clean_df["Drug Regimen"] == "Ceftamin", :]
+regimen_df = clean_df.loc[(clean_df["Drug Regimen"] == "Capomulin") |
+                          (clean_df["Drug Regimen"] == "Ramicane") |
+                          (clean_df["Drug Regimen"] == "Infubinol") |
+                          (clean_df["Drug Regimen"] == "Ceftamin"),:]
 
 # Start by getting the last (greatest) timepoint for each mouse
-capo_last_group = capo_df.groupby("Mouse ID").max()["Timepoint"]
-rami_last_group = rami_df.groupby("Mouse ID").max()["Timepoint"]
-infu_last_group = infu_df.groupby("Mouse ID").max()["Timepoint"]
-ceft_last_group = ceft_df.groupby("Mouse ID").max()["Timepoint"]
-# print(capo_last_group)
+regimen_last_group = regimen_df.groupby("Mouse ID").max()["Timepoint"]
+# print(regimen_last_group.head())
 
 # Merge this group df with the original dataframe to get the tumor volume at the last timepoint
-capo_last_df = pd.merge(capo_last_group, clean_df, on=("Mouse ID", "Timepoint"), how='left')
-rami_last_df = pd.merge(rami_last_group, clean_df, on=("Mouse ID", "Timepoint"), how='left')
-infu_last_df = pd.merge(infu_last_group, clean_df, on=("Mouse ID", "Timepoint"), how='left')
-ceft_last_df = pd.merge(ceft_last_group, clean_df, on=("Mouse ID", "Timepoint"), how='left')
+regimen_last_df = pd.merge(regimen_last_group, clean_df, on=("Mouse ID", "Timepoint"), how='left')
 
-capo_last_df.head()
+# html = regimen_last_df.head().to_html()
+# print(html)
+regimen_last_df.head()
 ```
 <div>
 
@@ -617,55 +613,32 @@ capo_last_df.head()
 ```python
 # Put treatments into a list for for loop (and later for plot labels)
 labels = ["Capomulin", "Ramicane", "Infubinol", "Ceftamin"]
-capo_tumor = capo_last_df["Tumor Volume (mm3)"]
-rami_tumor = rami_last_df["Tumor Volume (mm3)"]
-infu_tumor = infu_last_df["Tumor Volume (mm3)"]
-ceft_tumor = ceft_last_df["Tumor Volume (mm3)"]
 
 # Create list to fill with tumor vol data (for plotting)
-tumor_data = [capo_tumor, rami_tumor, infu_tumor, ceft_tumor]
+tumor_data = []
 
-# Calculate the IQR and quantitatively determine if there are any potential outliers. 
-    # Locate the rows which contain mice on each drug and get the tumor volumes --> already done
-    # add subset --> already done
+for regimen in labels:
+    # Locate the rows which contain mice on each drug and get the tumor volumes
+    df = regimen_last_df.loc[regimen_last_df["Drug Regimen"] == regimen, :]
+    # Just Grab the Tumor Volume column
+    tumor_df = df["Tumor Volume (mm3)"]
+    # Add this data frame to the list
+    tumor_data.append(tumor_df)
+
+    # Calculate the IQR and quantitatively determine if there are any potential outliers. 
+    quartiles = tumor_df.quantile([0.25, 0.5, 0.75])
+    lowerq = quartiles[0.25]
+    upperq = quartiles[0.75]
+    iqr = upperq - lowerq
     # Determine outliers using upper and lower bounds
-# Capomulin
-capo_quartiles = capo_tumor.quantile([0.25,0.5,0.75])
-capo_lowerq = capo_quartiles[0.25]
-capo_upperq = capo_quartiles[0.75]
-capo_iqr = capo_upperq - capo_lowerq
-capo_lower_bound = capo_lowerq - (1.5 * capo_iqr)
-capo_upper_bound = capo_upperq + (1.5 * capo_iqr)
-print(f"Capomulin outliers could be below {capo_lower_bound:.2f} mm3 or above {capo_upper_bound:.2f} mm3")
-# Ramicane
-rami_quartiles = rami_tumor.quantile([0.25,0.5,0.75])
-rami_lowerq = rami_quartiles[0.25]
-rami_upperq = rami_quartiles[0.75]
-rami_iqr = rami_upperq - rami_lowerq
-rami_lower_bound = rami_lowerq - (1.5 * rami_iqr)
-rami_upper_bound = rami_upperq + (1.5 * rami_iqr)
-print(f"Ramicane  outliers could be below {rami_lower_bound:.2f} mm3 or above {rami_upper_bound:.2f} mm3")
-# Infubinol
-infu_quartiles = infu_tumor.quantile([0.25,0.5,0.75])
-infu_lowerq = infu_quartiles[0.25]
-infu_upperq = infu_quartiles[0.75]
-infu_iqr = infu_upperq - infu_lowerq
-infu_lower_bound = infu_lowerq - (1.5 * infu_iqr)
-infu_upper_bound = infu_upperq + (1.5 * infu_iqr)
-print(f"Infubinol outliers could be below {infu_lower_bound:.2f} mm3 or above {infu_upper_bound:.2f} mm3")
-# Ceftamin
-ceft_quartiles = ceft_tumor.quantile([0.25,0.5,0.75])
-ceft_lowerq = ceft_quartiles[0.25]
-ceft_upperq = ceft_quartiles[0.75]
-ceft_iqr = ceft_upperq - ceft_lowerq
-ceft_lower_bound = ceft_lowerq - (1.5 * ceft_iqr)
-ceft_upper_bound = ceft_upperq + (1.5 * ceft_iqr)
-print(f"Ceftamin  outliers could be below {ceft_lower_bound:.2f} mm3 or above {ceft_upper_bound:.2f} mm3")
+    lower_bound = lowerq - (1.5 * iqr)
+    upper_bound = upperq + (1.5 * iqr)
+    print(f"{regimen} outliers could be below {lower_bound:.2f} mm3 or above {upper_bound:.2f} mm3") 
 ```
 Capomulin outliers could be below 20.70 mm3 or above 51.83 mm3  
-Ramicane  outliers could be below 17.91 mm3 or above 54.31 mm3  
+Ramicane outliers could be below 17.91 mm3 or above 54.31 mm3  
 Infubinol outliers could be below 36.83 mm3 or above 82.74 mm3  
-Ceftamin  outliers could be below 25.36 mm3 or above 87.67 mm3  
+Ceftamin outliers could be below 25.36 mm3 or above 87.67 mm3  
 ```python
 # Generate a box plot of the final tumor volume of each mouse across four regimens of interest
 green_diamond = dict(markerfacecolor="g", marker="D")
@@ -683,6 +656,7 @@ plt.show()
 ```python
 # Generate a line plot of tumor volume vs. time point for a mouse treated with Capomulin
 mouse_id = "b128"
+capo_df = clean_df.loc[clean_df["Drug Regimen"] == "Capomulin",:]
 b128_df = capo_df.loc[capo_df["Mouse ID"] == mouse_id, :]
 x_axis = b128_df["Timepoint"]
 y_axis = b128_df["Tumor Volume (mm3)"]
