@@ -619,9 +619,7 @@ tumor_data = []
 
 for regimen in labels:
     # Locate the rows which contain mice on each drug and get the tumor volumes
-    df = regimen_last_df.loc[regimen_last_df["Drug Regimen"] == regimen, :]
-    # Just Grab the Tumor Volume column
-    tumor_df = df["Tumor Volume (mm3)"]
+    tumor_df = regimen_last_df.loc[regimen_last_df["Drug Regimen"] == regimen, "Tumor Volume (mm3)"]
     # Add this data frame to the list
     tumor_data.append(tumor_df)
 
