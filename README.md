@@ -494,7 +494,7 @@ plt.show()
 ![TotalUniqueMiceBar_pyplot](Images/TotalUniqueMiceBar_pyplot.png)
 ```python
 # Generate a pie plot showing the distribution of female versus male mice using pandas
-gender_count = clean_df["Sex"].value_counts()
+gender_count = mouse_metadata_df["Sex"].value_counts()
 explode = [0.1, 0]
 gender_count.plot(kind="pie", autopct="%1.1f%%", explode=explode, shadow=True)
 plt.title("Male versus Female Mouse Distribution")
